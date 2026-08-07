@@ -58,8 +58,14 @@ app.config["MAX_CONTENT_LENGTH"] = MAX_CONTENT_LENGTH
 app.config["SECRET_KEY"] = JWT_SECRET
 CORS(app, origins="*")
 
-socketio = SocketIO(app, cors_allowed_origins="*", async_mode="threading",
-                     max_http_buffer_size=MAX_CONTENT_LENGTH)
+# Socket.IO configuration avec threading au lieu d'eventlet
+socketio = SocketIO(
+    app,
+    cors_allowed_origins="*",
+    async_mode="threading",
+    ping_timeout=25,
+    ping_interval=10,
+)
 
 # ===== DATABASE =====
 
@@ -1531,4 +1537,4 @@ if __name__ == "__main__":
     print("🚀 HM Chat Server starting on http://0.0.0.0:5000")
     print(f"📡 Invite links will use: {PUBLIC_BASE_URL}")
     try_start_public_tunnel()
-    socketio.run(app, host="0.0.0.0", port=5000, debug=True, allow_unsafe_werkzeug=True)
+    socketio.run(app, host="0.0.0.0", port=5000, debug=True)
